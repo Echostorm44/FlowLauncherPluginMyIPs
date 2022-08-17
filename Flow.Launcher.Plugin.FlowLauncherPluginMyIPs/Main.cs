@@ -4,22 +4,25 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 // Icon by https://www.freepik.com/  FreePik
 namespace Flow.Launcher.Plugin.FlowLauncherPluginMyIPs
 {
-    public class FlowLauncherPluginMyIPs : IPlugin
+    public class FlowLauncherPluginMyIPs : IAsyncPlugin
     {
         private const string Image = "icon.png";
         private PluginInitContext _context;
 
-        public void Init(PluginInitContext context)
+        public async Task InitAsync(PluginInitContext context)
         {
             _context = context;
         }
-
-        public List<Result> Query(Query query)
-        {   
-            string pubIp = new HttpClient().GetStringAsync("https://api.ipify.org").Result;    
+        public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
+        {
+            var results = new List<Result>();
+            token.ThrowIfCancellationRequested();
+            string pubIp = await new HttpClient().GetStringAsync("https://api.ipify.org", token);
             string localIP;
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
@@ -27,9 +30,9 @@ namespace Flow.Launcher.Plugin.FlowLauncherPluginMyIPs
                 IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
                 localIP = endPoint.Address.ToString();
             }
-            var results = new List<Result>();
-            results.Add(new Result 
-            { 
+            
+            results.Add(new Result
+            {
                 Title = pubIp,
                 SubTitle = "Public IP",
                 IcoPath = Image,

@@ -4,7 +4,7 @@
   "Name": "MyIPs",
   "Description": "A plugin to tell you your internal and public IP excluding any coming from VM programs and the like",
   "Author": "Adam Marciniec",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "Language": "csharp",
   "Website": "https://github.com/Echostorm44/FlowLauncherPluginMyIPs",
   "IcoPath": "icon.png",
